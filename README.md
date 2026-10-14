@@ -225,4 +225,4 @@ npm test         # unit tests (vitest)
 
 ## Licence
 
-MIT
+[MIT](LICENSE)
