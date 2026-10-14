@@ -1,6 +1,6 @@
 {
   "name": "@synergyconsulting/n8n-nodes-synergy-management-gateway",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "n8n node for SYNERGY Management Gateway for Active Directory — manage Active Directory through its REST API",
   "engines": {
     "node": ">=20.15"
