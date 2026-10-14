@@ -1,0 +1,12 @@
+node_modules/
+dist/
+obj/
+bin/
+*.esproj.user
+.vscode/
+# Holds a registry token; never commit it.
+.npmrc
+# Internal test plan (names the test instance and domain).
+docs/
+*.log
+.DS_Store

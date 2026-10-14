@@ -1,0 +1,17 @@
+import { type INodeProperties, updateDisplayOptions } from 'n8n-workflow';
+
+import { createDirectoryContextRead } from '../../helpers/directoryContextRead';
+
+// Get-ADReplicationSubnet.
+export const properties: INodeProperties[] = [];
+
+const displayOptions = {
+	show: {
+		resource: ['directoryContext'],
+		operation: ['getSubnets'],
+	},
+};
+
+export const description = updateDisplayOptions(displayOptions, properties);
+
+export const execute = createDirectoryContextRead('/ad/subnets');

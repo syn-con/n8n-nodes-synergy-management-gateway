@@ -1,0 +1,68 @@
+{
+  "name": "@syn-con/n8n-nodes-synergy-management-gateway",
+  "version": "2.0.0",
+  "description": "n8n node for SYNERGY Management Gateway for Active Directory — manage Active Directory through its REST API",
+  "engines": {
+    "node": ">=20.15"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "test": "vitest run",
+    "release": "n8n-node release",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "n8n",
+    "n8n-nodes",
+    "n8n-community-node-package",
+    "synergy",
+    "management-gateway",
+    "active-directory",
+    "activedirectory",
+    "ldap",
+    "identity",
+    "authentication"
+  ],
+  "author": {
+    "name": "syn-con"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/syn-con/n8n-nodes-synergy-management-gateway",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syn-con/n8n-nodes-synergy-management-gateway.git"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": false,
+    "credentials": [
+      "dist/credentials/SynergyManagementGatewayApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/SynergyManagementGateway/SynergyManagementGateway.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "*",
+    "eslint": "9.32.0",
+    "prettier": "3.6.2",
+    "release-it": "^19.0.4",
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.9"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "overrides": {
+    "form-data": "^4.0.6",
+    "lodash": "^4.18.1",
+    "uuid": "^11.1.1"
+  }
+}
