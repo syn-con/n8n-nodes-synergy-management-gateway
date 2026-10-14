@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 2.0.0
+## [2.0.2](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.1...2.0.2)
+
+### Commits
+
+- Name SYNERGY as the package author, with the support address [`6c652f8`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/6c652f8006eb31becefb754bfdd7c581f0c09dba)
+
+## [2.0.1](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.0...2.0.1) - 2026-10-14
+
+### Commits
+
+- Bump version from 2.0.0 to 2.0.1 [`961bfb6`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/961bfb66d3f56253de8aff8d2f6ee318cb0ebaeb)
+
+## 2.0.0 - 2026-10-14
 
 ### Commits
 
@@ -16,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add CI and npm publish workflows [`f53407b`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/f53407bc855fed69503ac2e9a78222ccbe1d9594)
 - Add the MIT licence file [`6f9ea0b`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/6f9ea0b06096de5bab6ba46dc6b5c15bb33b9df1)
 - Say on the credential that the node needs a SYNERGY Management Gateway installation [`16d92d5`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/16d92d59c0cf307d6f92b60cfbd9744cdf656c8f)
+- Update the changelog for 2.0.0 [`93ec8fe`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/93ec8fe59c7b376580ca0d57d9b9d16d87699028)
 - Write SYNERGY in capitals in the credential notice [`e697149`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/e697149e2bae7ed98acdce832e4946673896a77e)
 - Write SYNERGY in capitals in the licence [`3d4a54e`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/3d4a54e69e1956dc01f0cd13211c8552d1c17c12)
 
