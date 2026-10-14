@@ -32,7 +32,8 @@
     "authentication"
   ],
   "author": {
-    "name": "syn-con"
+    "name": "SYNERGY",
+    "email": "support@synergy.eu"
   },
   "license": "MIT",
   "homepage": "https://github.com/syn-con/n8n-nodes-synergy-management-gateway",
