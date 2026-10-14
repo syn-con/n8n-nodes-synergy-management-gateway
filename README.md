@@ -1,5 +1,8 @@
 # @synergyconsulting/n8n-nodes-synergy-management-gateway
 
+[![NPM Version](https://img.shields.io/npm/v/@synergyconsulting/n8n-nodes-synergy-management-gateway?style=flat-square)](https://www.npmjs.com/package/@synergyconsulting/n8n-nodes-synergy-management-gateway)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
 An [n8n](https://n8n.io) community node for **SYNERGY Management Gateway for Active Directory**. It manages Active
 Directory through your own SYNERGY Management Gateway installation, using an API key: users, groups, computers,
 organizational units, generic directory objects, managed service accounts, delegations and service principal names,
@@ -185,33 +188,9 @@ With **Continue on Fail** on, a failed item becomes `{ error, errorCode, httpCod
 code (for example `AD.Attributes.Protected`), so a workflow can branch on it. A queued change reported as an error
 also carries `approvalRequired: true` and `operationId`, so the handle is never lost.
 
-## Upgrading
+## Changes and upgrading
 
-### From 1.x
-
-Version 2.0.0 renamed the node and the credential to meet n8n's rules for verified community nodes, and moved the
-package from the `@syn-con` scope to `@synergyconsulting`. n8n finds nodes and credentials by these IDs, so **nothing
-saved with 1.x carries over by itself**:
-
-| | 1.x | 2.0 |
-|---|---|---|
-| Package | `@syn-con/n8n-nodes-synergy-management-gateway` | `@synergyconsulting/n8n-nodes-synergy-management-gateway` |
-| Node type | `activeDirectory` | `synergyManagementGateway` |
-| Credential type | `activeDirectoryApiKey` | `synergyManagementGatewayApi` |
-
-1. Uninstall the 1.x package, then install this one. Never have both installed.
-2. Create a **SYNERGY Management Gateway for Active Directory API** credential with the same API URL, Client ID and
-   API key (the fields have not changed).
-3. In each workflow, replace every old node with **SYNERGY Management Gateway for Active Directory** and select the
-   new credential. Or export the workflow, replace `@syn-con/n8n-nodes-synergy-management-gateway.activeDirectory`
-   with `@synergyconsulting/n8n-nodes-synergy-management-gateway.synergyManagementGateway` and
-   `activeDirectoryApiKey` with `synergyManagementGatewayApi`, import it again and pick the credential on each node.
-
-### From the Directory Access Platform package
-
-Up to version 1.1.0 the node was published as `@syn-con/n8n-nodes-synergy-directory-access-platform`. That package
-is deprecated but keeps working. To move, uninstall it first, install this one, and follow *From 1.x* above — its
-node and credential IDs are the 1.x ones.
+What changed in each version, and how to upgrade from 1.x, is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Development
 
