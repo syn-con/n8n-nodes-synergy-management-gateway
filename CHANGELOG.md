@@ -12,8 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial commit: n8n node for SYNERGY Management Gateway for Active Directory (2.0.0) [`43b5cde`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/43b5cde0122a9e16f45154182dfb685000a4541a)
 - Rename the transport to synergyManagementGatewayApiRequest [`f923df7`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/f923df74c402962976981dc64bc30c7ad8a1a3cb)
 - Move to the @synergyconsulting scope, drop the Visual Studio project, rewrite the README for 2.0.0 [`6898d93`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/6898d938944e1722978868316d94128b202458b9)
+- Keep a CHANGELOG.md, written by every release; add README badges [`b478c3c`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/b478c3c01410a01cb70cda5f6d02b4a600a36c2a)
 - Add CI and npm publish workflows [`f53407b`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/f53407bc855fed69503ac2e9a78222ccbe1d9594)
 - Add the MIT licence file [`6f9ea0b`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/6f9ea0b06096de5bab6ba46dc6b5c15bb33b9df1)
+- Say on the credential that the node needs a SYNERGY Management Gateway installation [`16d92d5`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/16d92d59c0cf307d6f92b60cfbd9744cdf656c8f)
+- Write SYNERGY in capitals in the credential notice [`e697149`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/e697149e2bae7ed98acdce832e4946673896a77e)
+- Write SYNERGY in capitals in the licence [`3d4a54e`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/3d4a54e69e1956dc01f0cd13211c8552d1c17c12)
 
 <!-- auto-changelog-above -->
 <!-- Everything above this line is regenerated from the commits by `npm run release`; write notes by hand below it. -->
