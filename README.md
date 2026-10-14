@@ -1,195 +1,228 @@
-# @syn-con/n8n-nodes-synergy-management-gateway
+# @synergyconsulting/n8n-nodes-synergy-management-gateway
 
-An [n8n](https://n8n.io) community node for managing **Active Directory** through the
-**SYNERGY Management Gateway for Active Directory** REST API — create/read/update/delete users, groups, computers, organizational
-units and generic objects, manage group membership, and run saved LDAP searches.
+An [n8n](https://n8n.io) community node for **SYNERGY Management Gateway for Active Directory**. It manages Active
+Directory through your own SYNERGY Management Gateway installation, using an API key: users, groups, computers,
+organizational units, generic directory objects, managed service accounts, delegations and service principal names,
+plus read-only views of the forest, domain and sites.
 
-The node talks to your own SYNERGY Management Gateway installation using an API key.
+Every change runs through the gateway, so its permissions, attribute policies, approval rules and audit log apply to
+a workflow exactly as they do to a person in the web console.
+
+The node can also be used as a tool by an n8n AI agent (`usableAsTool`). It then acts with the same API key as any
+workflow, and the gateway supervises it the same way.
 
 ## Installation
 
-### Via the n8n UI (self-hosted)
+### In n8n (self-hosted)
 
-Settings → **Community Nodes** → **Install** → enter `@syn-con/n8n-nodes-synergy-management-gateway`.
+Go to **Settings → Community Nodes → Install** and enter
+`@synergyconsulting/n8n-nodes-synergy-management-gateway`.
 
-### Upgrading from 1.x to 2.0
+### Docker
 
-Version 2.0.0 renames the node and the credential to meet n8n's naming rules for verified community nodes.
-n8n finds a node and a credential by these ids, so **nothing saved with 1.x carries over by itself**:
-
-| | 1.x | 2.0 |
-|---|---|---|
-| Node type | `activeDirectory` | `synergyManagementGateway` |
-| Credential type | `activeDirectoryApiKey` | `synergyManagementGatewayApi` |
-
-After upgrading:
-
-1. Create a **SYNERGY Management Gateway for Active Directory API** credential with the same API URL, Client ID
-   and API key as before (the fields are unchanged).
-2. In each workflow, replace every node of the old type with **SYNERGY Management Gateway for Active Directory**
-   and select the new credential. Alternatively, export the workflow and replace
-   `@syn-con/n8n-nodes-synergy-management-gateway.activeDirectory` with
-   `@syn-con/n8n-nodes-synergy-management-gateway.synergyManagementGateway` and `activeDirectoryApiKey` with
-   `synergyManagementGatewayApi`, then import it again and pick the credential on each node.
-
-To stay on 1.x until the workflows are ready, install the package as
-`@syn-con/n8n-nodes-synergy-management-gateway@1`.
-
-### Moving from the pre-rename package
-
-Until version 1.1.0 this node was published as `@syn-con/n8n-nodes-synergy-directory-access-platform`. That
-package is deprecated but keeps working: nothing changes for an installation that leaves it in place.
-
-To move to this package, **uninstall the old package first**, install this one, and then follow
-*Upgrading from 1.x to 2.0* above: the old package's node and credential ids are the 1.x ones.
-
-### Via Docker
-
-Build an image that bundles the node into n8n (see the included `Dockerfile`):
+The included `Dockerfile` builds an n8n image with the node bundled:
 
 ```bash
 npm install
 npm run build
-docker build --build-arg N8N_VERSION=<your-n8n-version> -t n8n-with-ad .
+docker build --build-arg N8N_VERSION=<your-n8n-version> -t n8n-with-synergy-management-gateway .
 ```
+
+Pin `N8N_VERSION` to the n8n version you run in production.
 
 ## Credentials
 
-Create a **SYNERGY Management Gateway for Active Directory API** credential with:
+Create a **SYNERGY Management Gateway for Active Directory API** credential:
 
-| Field | Notes |
+| Field | What to enter |
 |---|---|
-| **API URL** | Base URL of the API **including the `/api` prefix**, e.g. `https://ad-api.example.com/api`. **Must** be `https://` — plaintext `http://` is rejected so the API key can't be intercepted. |
-| **Client ID** | The client id of an API-key → AD-connection *binding*. This selects which Active Directory the operations run against (sent as the `X-Client-Id` header). |
-| **API Key** | The API key issued by the SYNERGY Management Gateway. Sent as the `X-API-Key` header. |
-| **Ignore SSL Errors** | **INSECURE.** Disables TLS certificate validation. Use only against a trusted local dev server, never in production. |
+| **API URL** | The API's base URL, **including `/api`** — for example `https://gateway.example.com/api`. It must start with `https://`; the credential refuses `http://` so the API key never travels unencrypted. |
+| **Client ID** | The client ID of one of your API key's directory bindings. It selects which Active Directory the node works in (sent as `X-Client-Id`). |
+| **API Key** | An API key issued in the gateway's web console (sent as `X-API-Key`). |
+| **Ignore SSL Errors** | Turns off certificate checking. **Insecure** — only for a test server with a self-signed certificate, never in production. |
 
-> **Common setup mistake:** leaving `/api` off the URL. The node calls paths like `/ad/users` and
-> `/saved-ldap-filters`, which resolve to `https://host/api/ad/users` only when the base URL ends
-> in `/api`.
+The most common mistake is leaving `/api` off the URL: the node calls paths such as `/ad/users`, which only resolve
+to `https://gateway.example.com/api/ad/users` when the base URL ends in `/api`.
 
-The credential **Test** button calls `GET /metadata`, which needs only a valid authenticated
-identity — it verifies the key without requiring any specific permission.
+**Test** calls `GET /metadata`, which any valid key may read, so a green test proves the URL and the key — not that
+the key may do what your workflow asks.
 
-### Permissions & bindings
+### What the key may do
 
-- The API key's role must hold the relevant permissions (`ADUsers.*`, `ADGroups.*`,
-  `ADComputers.*`, `ADOrganizationUnits.*`, `ADObjects.*`, `SavedLdapFilters.*`).
-- AD operations require the **Client ID** to resolve to a binding that belongs to your key; without
-  a valid binding the API returns 400/403.
+- **Permissions.** The key can do what its role allows, and never more than its owner can do at that moment. Each
+  operation needs the matching gateway permission — for example `ad:users:list` to list users, `ad:users:create` to
+  create one. Saved searches need `savedfilters:execute`; *Get Waiting* needs `operations:waiting:list`. ACL,
+  delegation and SPN changes have permissions of their own, which ordinary administrative roles do not include.
+- **Directory.** The Client ID must name a binding of this key, to a directory the key's owner can still reach;
+  otherwise the API answers `403`.
 
-## Resources & operations
+## Resources and operations
 
 | Resource | Operations |
 |---|---|
-| **User** | Get Many, Get By ID, Create, Update, Delete, Enable, Disable, Reset Password, Get Groups, Assign Group, Assign Groups, Unassign Group, Unassign Groups, Clear Groups |
-| **Group** | Get Many, Get By ID, Create, Update, Delete, Assign Member, Assign Members, Unassign Member, Unassign Members, Clear Members |
-| **Computer** | Get Many, Get By ID, Create, Update, Delete, Enable, Disable, Reset Password |
-| **Organizational Unit** | Get Many, Get By ID, Create, Update, Delete, Preview Account Enable/Disable, Enable Accounts, Disable Accounts |
-| **Object** (generic) | Get Many, Get By ID, Create, Update, Move, Rename, Delete, Run Saved Search, Search by Saved Search |
+| **User** | Get Many, Get By ID, Search by State, Create, Update, Delete By ID, Enable, Disable, Unlock, Reset Password, Change Password, Set Account Expiration, Get Groups, Get Authorization Groups, Assign Group, Assign Groups, Unassign Group, Unassign Groups, Clear Groups |
+| **Group** | Get Many, Get By ID, Get Members, Create, Update, Delete By ID, Assign Member, Assign Members, Unassign Member, Unassign Members, Clear Members |
+| **Computer** | Get Many, Get By ID, Create, Update, Delete By ID, Enable, Disable, Reset Password |
+| **Organizational Unit** | Get Many, Get By ID, Create, Update, Delete By ID, Preview Account Enable/Disable, Enable Accounts, Disable Accounts |
+| **Object** (any class) | Get Many, Get By ID, Create, Update, Move, Rename, Delete By ID, Run Saved Search, Search by Saved Search |
+| **Service Account** | Get Many, Get, Create, Update, Delete, Get Many Computer Service Accounts, Set Computer Link, Get Many Password Retrieval Principals, Set Password Retrieval Principals, Get KDS Readiness |
+| **Security** | Get ACL, Get Many Delegation Templates, Get Many Delegations, Apply Delegation, Revoke Delegation, Set Deletion Protection, Get Service Principal Names, Set Service Principal Names |
+| **Directory Context** (read-only) | Get Directory Context, Get Forest, Get Domain, Get Domain Controllers, Get Root DSE, Get Sites, Get Site Links, Get Subnets, Get Trusts, Get Optional Features, Get KDS Root Keys |
 | **Operation** | Get Waiting, Get By ID, Wait for Approval |
 
-### Notes
+### Reading
 
-- **List operations require a Base DN.** `Get Many` on users/groups/computers/OUs and the generic
-  Object search need a Base DN (search root); the API rejects an empty one.
-- **Pagination.** List operations page with a continuation token; use **Return All** to fetch every
-  match, or set a **Limit**.
-- **Attribute updates.** Update operations support Replace / Add / Remove / Clear semantics against
-  LDAP attributes. Attribute names are validated against the AD schema (loaded from the API).
-  Values are checked against each attribute's type: `Bool` takes a boolean (or `true`/`false`),
-  `GeneralizedTime` a date (an ISO string, `$now`, or Active Directory's own `yyyyMMddHHmmss.0Z`),
-  converted to UTC for you. A multi-valued attribute (`[…[]]`) takes an array or one value per line;
-  a single line is one value, never split on commas.
-- **Saved searches.** *Run Saved Search* executes a saved LDAP filter; for "All"-type filters (or
-  filters without a base DN) it delegates to the server-side results endpoint automatically.
-- **Enabling or disabling every account in an OU.** *Preview Account Enable/Disable* lists what a run
-  would change — `toChange`, `alreadyInState`, `excluded` (each with a `reasonCode` and `reason`) and
-  `exceedsLimit` — without changing anything. *Enable Accounts* / *Disable Accounts* then apply it.
-  Both take **Account Kinds** (Users, Computers or All) and **Scope** (Only This OU, or Include Sub-OUs).
-  - At most **100** accounts change in one run. A larger selection is refused whole
-    (`OrganizationUnitAccounts.TooMany`), never split — narrow the kinds or the scope, or preview first
-    and check `exceedsLimit`.
-  - **A run is not transactional.** When some accounts fail, the API answers `207 Multi-Status`; the
-    node does not treat that as an error, because the other accounts *did* change, and does not report
-    it as success either. The item is the API's `{ plan, batch }` body with the counters lifted to the
-    top: `success` (true only when nothing failed), `partialFailure`, `total`, `succeeded` and
-    `failed`. Branch on `{{ $json.partialFailure }}`, and read `batch.items` for the per-account
-    outcome. Turn on **Fail on Partial Failure** to fail the item instead. `batch` is absent when
-    nothing needed changing (a success with zero counts).
-  - The platform treats this as a security change, so a **Guarded** key is normally answered with
-    `202` and the run waits for a person — handled by **On Approval Required** like every other write.
-- **Your API key has a supervision level, and it decides what waits.** Approval is a control on
-  machine credentials, not on operations: a person is never queued, and this node always calls as an
-  API key. Every key carries one of three levels, set on its edit form in the web console.
+- **Lists need a Base DN.** *Get Many* on users, groups, computers and organizational units, and the generic object
+  search, need a search root; the API refuses an empty one.
+- **Paging.** Turn on **Return All** to fetch every match, or set a **Limit**.
+- **Saved searches.** Both operations run a search saved in the gateway, picked from a list. *Search by Saved
+  Search* always runs it on the server. *Run Saved Search* runs it through the typed list for the filter's object
+  class and base DN, and falls back to the server when the filter has neither.
+- **Search by State** finds users by account state — disabled, enabled, expired, inactive (for a number of days),
+  locked out, password expired, password must change, password never expires, password not required — optionally
+  under a base DN and narrowed by an LDAP filter.
+- **Attributes the gateway blocks** are left out of every result, and a filter that names one is refused.
 
-  | Level | The key waits for a person before |
-  |---|---|
-  | Unsupervised | nothing it does on its own account |
-  | **Guarded** (the default, including for keys created before this existed) | deleting anything, and any change to ACLs, delegations, SPNs, password policies or a privileged attribute |
-  | Supervised | every change it makes |
+### Writing
 
-  Two things ask at **every** level, whatever the key's own: a change to an object Active Directory
-  protects (`adminCount=1` — the members of Domain Admins and the other protected groups, and those
-  groups themselves), and an operation an administrator has pinned "always ask agents".
+- **Attribute updates** use Replace, Add, Remove and Clear. Attribute names are checked against the directory schema,
+  which the node loads from the API, and values against each attribute's type: a `Bool` takes a boolean (or
+  `true`/`false`); a `GeneralizedTime` takes a date — an ISO string, `$now`, or Active Directory's own
+  `yyyyMMddHHmmss.0Z` — converted to UTC for you. A multi-valued attribute takes an array, or one value per line; a
+  single line is one value, never split on commas.
+- **Read-only attributes.** An administrator can make an attribute read-only or blocked (for example the
+  Exchange-managed ones). Writing one is refused with `403` and the error code `AD.Attributes.Protected`.
+- **Change Password** needs the current password and only the user's own *change password* right; **Reset Password**
+  is the administrative reset.
+- **Unlock** is safe to repeat; `wasLocked` in the output says whether the account was locked.
+- **Set Password Retrieval Principals** decides who can read a group managed service account's password — that hands
+  out a usable credential, so treat it like granting access.
+- **Set Service Principal Names** replaces the whole set; writing one makes the account a Kerberos service target.
 
-  So an integration that must run unattended — an overnight leavers job, a joiners workflow that
-  deletes stale accounts — needs its key raised to **Unsupervised**, which only someone who can
-  approve operations may do. Raising it does not let the key touch a protected account unasked;
-  nothing does, and a password change to one is refused outright rather than queued, because a queued
-  request would have to store the password in the clear.
+### Enabling or disabling every account in an organizational unit
 
-  Two more things ask whatever the key's level, and both are worth knowing before a bulk workflow
-  surprises you:
+*Preview Account Enable/Disable* lists what a run would change — `toChange`, `alreadyInState`, `excluded` (each with
+`reasonCode` and `reason`) and `exceedsLimit` — without changing anything. *Enable Accounts* and *Disable Accounts*
+then apply it. All three take **Account Kinds** (Users, Computers or All) and **Scope** (Only This OU, or Include
+Sub-OUs).
 
-  - **Protected containers.** An administrator can put an OU out of an agent's unsupervised reach on the
-    connection screen. Anything your workflow writes inside one — or *into* one, which catches a create
-    or a move — waits for a person.
-  - **The volume brake.** More than twenty destructive changes in an hour from one key and *everything*
-    that key does starts waiting, not only the deletes, until the hour rolls. Nothing already done is
-    undone. A leavers run that removes more than twenty accounts will hit this: either approve the queued
-    requests, or raise the threshold in the server's configuration
-    (`AgentSupervision:Volume:Threshold`).
+- At most **100** accounts change in one run. A larger selection is refused whole
+  (`OrganizationUnitAccounts.TooMany`), never split — narrow the kinds or the scope, or preview first and check
+  `exceedsLimit`.
+- **A run is not all-or-nothing.** When some accounts fail, the API answers `207 Multi-Status`. The node does not
+  treat that as an error — the other accounts *did* change — and does not report it as a success either: the item is
+  the API's `{ plan, batch }` body with the counters lifted to the top, `success` (true only when nothing failed),
+  `partialFailure`, `total`, `succeeded` and `failed`. Branch on `{{ $json.partialFailure }}`, and read
+  `batch.items` for each account. Turn on **Fail on Partial Failure** to fail the item instead. `batch` is absent
+  when nothing needed changing.
 
-  The `202` body now carries `reason` (`ProtectedTarget`, `Pinned`, `Volume` or `Level`) and
-  `reasonDetail` alongside the operation id, so a workflow can branch on *why* it is waiting — `Volume`
-  in particular means "wait and retry", where `ProtectedTarget` means "a person has to look at this".
-  Existing workflows need no change: the node ignores fields it does not know.
+### Licence limits
 
-- **Approval-gated writes: getting the created object.** When a policy requires approval, the API
-  answers `202` with an operation id instead of the object — the object does not exist yet, so the
-  write operation cannot return it. Set the node option **On Approval Required** to *Continue and
-  Output Operation ID*, then follow it with the **Operation** resource:
+If your gateway licence limits how many enabled user accounts it manages, creating or enabling a user at the limit —
+and changing a user's group memberships once over it — is refused with `403` and `License.AccountLimitReached`.
+Edits, password resets, disabling, moves and deletes always work.
 
-  ```
-  [AD: Create User]        → { approvalRequired: true, operationId: "…" }
-  [AD: Operation → Wait for Approval]   (or Get By ID, to poll it yourself)
-      → { status: "Success", result: { entityId, distinguishedName, objectClass, action } }
-  [next node]              → {{ $json.result.entityId }}
-  ```
+## When a change waits for approval
 
-  `result` is the affected object — for a create, the `entityId` is the new object's `objectGUID`.
-  It is `null` while the operation is still `WaitingToApprove`, and for operations that never
-  reached the directory (rejected, blocked by policy, failed early), so `result` being present is
-  itself the "it happened, here is what it produced" signal. The same block is on every row of the
-  operations log, not just approval-gated ones.
+Approval in SYNERGY Management Gateway applies to **machine credentials**, not to operations: a person is never
+queued, and this node always calls with an API key. Each key has a **supervision level**, set on its edit form in the
+web console:
 
-  **Wait for Approval** also ends when the request's approval window closes (`expiresAt`, 72 hours by
-  default): approvers no longer see an expired request, so nobody can decide it. It then emits
-  `status: "Expired"`, `expired: true`, `approved: false` — or fails the item, with *Fail on
-  Rejection* on — so the workflow can resubmit rather than wait. A timeout of `0` means "until the
-  request expires"; no wait ever runs longer than 7 days.
+| Level | The key waits for a person before |
+|---|---|
+| Unsupervised | nothing (apart from the cases below) |
+| **Guarded** — the default | deleting anything, and any change to ACLs, delegations, SPNs, password policies or a privileged attribute |
+| Supervised | every change |
+
+Some changes wait **at every level**:
+
+- a change to an object Active Directory protects (`adminCount=1` — members of Domain Admins and the other protected
+  groups, and those groups themselves);
+- a change inside, or into, a **protected container** an administrator has set on the directory connection — this
+  catches creates and moves too;
+- an operation an administrator has set to *always ask agents*;
+- everything the key does once it has made more than **20 destructive changes in an hour** (the volume brake), until
+  the hour rolls on. Nothing already done is undone. The threshold is the server setting
+  `AgentSupervision:Volume:Threshold`.
+
+An integration that must run unattended — an overnight leavers job, say — needs its key raised to **Unsupervised**,
+which only someone who may approve operations can do. Even then it cannot change a protected account unasked, and a
+password change to one is refused outright rather than queued: a queued request would have to store the password in
+the clear.
+
+### What the node does with a queued change
+
+The API answers `202 Accepted` with an operation ID instead of the result. Set **Options → On Approval Required**:
+
+- **Error** (default) — the item fails; the error carries the operation ID.
+- **Continue and Output Operation ID** — the node emits `{ approvalRequired: true, operationId, … }` so the workflow
+  can branch, or wait:
+
+```
+[Create User]                         → { approvalRequired: true, operationId: "…", reason: "Level" }
+[Operation → Wait for Approval]       (or Get By ID, to poll yourself)
+                                      → { status: "Success", result: { entityId, distinguishedName, objectClass, action } }
+[next node]                           → {{ $json.result.entityId }}
+```
+
+- **`reason`** says why it is waiting — `Level`, `ProtectedTarget`, `Pinned` or `Volume` — with `reasonDetail` in
+  words. `Volume` means "wait and try again later"; `ProtectedTarget` means a person has to look at it.
+- **`result`** describes the object the operation produced; for a create, `entityId` is the new object's
+  `objectGUID`. It is `null` until the operation has run, and stays `null` for one that never reached the directory
+  (rejected, cancelled, refused, failed early) — so its presence is the "done, and here is what it made" signal.
+- **Wait for Approval** polls every **Poll Interval** seconds until the operation is decided — run (`Success`),
+  failed, rejected, or cancelled by the person who asked — or its request expires undecided (`expiresAt`, 72 hours
+  by default). **Fail on Rejection** is on by default, so anything but `Success` fails the item with the reason.
+  Turn it off to get an item instead, with `status` and `approved` to branch on; an expired request then comes out
+  as `status: "Expired"`, `expired: true`, `approved: false`, so the workflow can resubmit. A **Timeout** of `0`
+  waits until the request expires; no wait runs longer than 7 days.
+- **Get Waiting** lists the requests still waiting for approval that were made as the key's owner — by this key, other
+  keys of theirs, or their agents.
+
+## Errors
+
+With **Continue on Fail** on, a failed item becomes `{ error, errorCode, httpCode }` — `errorCode` is the gateway's own
+code (for example `AD.Attributes.Protected`), so a workflow can branch on it. A queued change reported as an error
+also carries `approvalRequired: true` and `operationId`, so the handle is never lost.
+
+## Upgrading
+
+### From 1.x
+
+Version 2.0.0 renamed the node and the credential to meet n8n's rules for verified community nodes, and moved the
+package from the `@syn-con` scope to `@synergyconsulting`. n8n finds nodes and credentials by these IDs, so **nothing
+saved with 1.x carries over by itself**:
+
+| | 1.x | 2.0 |
+|---|---|---|
+| Package | `@syn-con/n8n-nodes-synergy-management-gateway` | `@synergyconsulting/n8n-nodes-synergy-management-gateway` |
+| Node type | `activeDirectory` | `synergyManagementGateway` |
+| Credential type | `activeDirectoryApiKey` | `synergyManagementGatewayApi` |
+
+1. Uninstall the 1.x package, then install this one. Never have both installed.
+2. Create a **SYNERGY Management Gateway for Active Directory API** credential with the same API URL, Client ID and
+   API key (the fields have not changed).
+3. In each workflow, replace every old node with **SYNERGY Management Gateway for Active Directory** and select the
+   new credential. Or export the workflow, replace `@syn-con/n8n-nodes-synergy-management-gateway.activeDirectory`
+   with `@synergyconsulting/n8n-nodes-synergy-management-gateway.synergyManagementGateway` and
+   `activeDirectoryApiKey` with `synergyManagementGatewayApi`, import it again and pick the credential on each node.
+
+### From the Directory Access Platform package
+
+Up to version 1.1.0 the node was published as `@syn-con/n8n-nodes-synergy-directory-access-platform`. That package
+is deprecated but keeps working. To move, uninstall it first, install this one, and follow *From 1.x* above — its
+node and credential IDs are the 1.x ones.
 
 ## Development
 
 ```bash
 npm install
-npm run dev      # watch + run inside a local n8n
-npm run lint     # lint (self-hosted ruleset)
+npm run dev      # build, watch, and run inside a local n8n
+npm run lint     # n8n's community-node lint rules
 npm run build    # compile to dist/
-npm test         # vitest
+npm test         # unit tests (vitest)
 ```
 
-## License
+## Licence
 
-[MIT](LICENSE)
+MIT

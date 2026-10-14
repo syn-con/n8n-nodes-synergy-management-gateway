@@ -49,7 +49,7 @@ export class SynergyManagementGatewayApi implements ICredentialType {
 		light: 'file:../icons/synergy.svg',
 		dark: 'file:../icons/synergy.dark.svg',
 	}
-	documentationUrl = 'https://github.com/syn-con/SYNERGY.Management.Gateway/tree/master/src/Synergy.ManagementGateway.n8n#readme';
+	documentationUrl = 'https://github.com/syn-con/n8n-nodes-synergy-management-gateway#readme';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API URL',
