@@ -1,0 +1,20 @@
+{
+    "node": "@synergyconsulting/n8n-nodes-synergy-management-gateway.synergyManagementGateway",
+    "nodeVersion": "1.0",
+    "codexVersion": "0.1",
+    "categories": [
+        "Productivity"
+    ],
+    "resources": {
+        "credentialDocumentation": [
+            {
+                "url": "https://help.synergy.lt/synergy-management-gateway"
+            }
+        ],
+        "primaryDocumentation": [
+            {
+                "url": "https://help.synergy.lt/synergy-management-gateway"
+            }
+        ]
+    }
+}
