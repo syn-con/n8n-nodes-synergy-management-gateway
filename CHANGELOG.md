@@ -5,11 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.3](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.2...2.0.3)
+## [2.0.4](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.3...2.0.4)
+
+### Commits
+
+- Drop the overrides field, which n8n's community package scan refuses [`4dfaf8b`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/4dfaf8b9a751445d2414e69a6cd7da142c9ec71f)
+
+## [2.0.3](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.2...2.0.3) - 2026-10-14
 
 ### Commits
 
 - Add the node's codex file [`bd1007e`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/bd1007eef4abede1a9946890a899eff8415c9908)
+- Release 2.0.3 [`5064d39`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/5064d393fc0ab674493f3f71aa9d93411d5d3215)
 - Point the documentation links at the user guide on help.itsmcloud.lt [`5a69491`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/5a694914ba382dbad1d8084198ed2ffea08a4666)
 
 ## [2.0.2](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.1...2.0.2) - 2026-10-14
