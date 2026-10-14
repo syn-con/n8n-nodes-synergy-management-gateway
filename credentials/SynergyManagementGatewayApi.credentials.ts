@@ -49,13 +49,13 @@ export class SynergyManagementGatewayApi implements ICredentialType {
 		light: 'file:../icons/synergy.svg',
 		dark: 'file:../icons/synergy.dark.svg',
 	}
-	documentationUrl = 'https://github.com/syn-con/n8n-nodes-synergy-management-gateway#readme';
+	documentationUrl = 'https://help.itsmcloud.lt/synergy-management-gateway/introduction';
 	properties: INodeProperties[] = [
 		// The node is a client of the product, not a connector to Active Directory itself: without an installation of
 		// SYNERGY Management Gateway there is nothing for this credential to point at, so say so before anyone fills it in.
 		{
 			displayName:
-				'This node is a custom solution for <b>SYNERGY Management Gateway for Active Directory</b>, a licensed product of SYNERGY Consulting installed on your own Windows server. It works only through that product\'s API and does not connect to Active Directory directly. <a href="https://www.synergy.eu/" target="_blank">Contact SYNERGY</a> for a licence, and see the <a href="https://help.synergy.lt/synergy-management-gateway" target="_blank">user guide</a> to install it and issue an API key.',
+				'This node is a custom solution for <b>SYNERGY Management Gateway for Active Directory</b>, a licensed product of SYNERGY Consulting installed on your own Windows server. It works only through that product\'s API and does not connect to Active Directory directly. <a href="https://www.synergy.eu/" target="_blank">Contact SYNERGY</a> for a licence, and see the <a href="https://help.itsmcloud.lt/synergy-management-gateway/introduction" target="_blank">user guide</a> to install it and issue an API key.',
 			name: 'productNotice',
 			type: 'notice',
 			default: '',

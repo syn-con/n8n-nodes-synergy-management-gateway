@@ -8,12 +8,12 @@
     "resources": {
         "credentialDocumentation": [
             {
-                "url": "https://help.synergy.lt/synergy-management-gateway"
+                "url": "https://help.itsmcloud.lt/synergy-management-gateway/introduction"
             }
         ],
         "primaryDocumentation": [
             {
-                "url": "https://help.synergy.lt/synergy-management-gateway"
+                "url": "https://help.itsmcloud.lt/synergy-management-gateway/introduction"
             }
         ]
     }
