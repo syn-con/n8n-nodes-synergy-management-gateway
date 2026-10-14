@@ -5,7 +5,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toWriteResult } from '../../helpers/writeResult';
 import { apiPath } from '../../transport/apiPath';
 
@@ -48,7 +48,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		const memberId = this.getNodeParameter('memberId', i) as string;
 
 		try {
-			const response = await activeDirectoryApiRequest.call(
+			const response = await synergyManagementGatewayApiRequest.call(
 				this,
 				'DELETE',
 				apiPath`/ad/groups/${groupId}/members/${memberId}`,

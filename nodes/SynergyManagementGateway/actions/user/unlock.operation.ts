@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toWriteResult } from '../../helpers/writeResult';
 import { apiPath } from '../../transport/apiPath';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
@@ -42,7 +42,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			// The API returns { userId, wasLocked }. wasLocked is forwarded rather than swallowed so a
 			// workflow can branch on it: the operation is idempotent, so success alone does not mean the
 			// account had actually been locked.
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'POST',
 				apiPath`/ad/users/${userId}/unlock`,

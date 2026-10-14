@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath } from '../../transport/apiPath';
 
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
@@ -77,7 +77,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 		try {
 			// 1. Fetch the saved filter configuration
-			const filter = (await activeDirectoryApiRequest.call(
+			const filter = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'GET',
 				apiPath`/saved-ldap-filters/${savedFilterId}`,
@@ -117,7 +117,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			let records: IDataObject[] = [];
 
 			while (returnAll || records.length < limit) {
-				const response = (await activeDirectoryApiRequest.call(
+				const response = (await synergyManagementGatewayApiRequest.call(
 					this,
 					'GET',
 					endpoint,

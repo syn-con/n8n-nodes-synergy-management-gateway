@@ -14,7 +14,7 @@ import { isApprovalPending } from '../transport/approvalPending';
  * Every write operation emits through this one function; `test/writeOperations.test.ts` runs each
  * of them against a 202 and fails for one that does not.
  *
- * @param response what `activeDirectoryApiRequest` resolved to
+ * @param response what `synergyManagementGatewayApiRequest` resolved to
  * @param fallback the item to emit when the change was actually carried out
  */
 export function toWriteResult(response: unknown, fallback: IDataObject): IDataObject {

@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
 
 // GET /ad/service-accounts — Get-ADServiceAccount.
@@ -50,7 +50,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		const unusableOnly = this.getNodeParameter('unusableOnly', i, false) as boolean;
 
 		try {
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'GET',
 				'/ad/service-accounts',

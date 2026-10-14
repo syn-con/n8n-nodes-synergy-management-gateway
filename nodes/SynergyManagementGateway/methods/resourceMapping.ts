@@ -1,5 +1,5 @@
 import type { FieldType, ILoadOptionsFunctions, ResourceMapperField, ResourceMapperFields } from 'n8n-workflow';
-import { activeDirectoryApiRequest } from '../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../transport/synergyManagementGatewayApiRequest';
 
 export interface SchemaAttribute {
     name: string;
@@ -35,7 +35,7 @@ async function loadSchemaFields(
 ): Promise<ResourceMapperFields> {
     
 
-    const schema = await activeDirectoryApiRequest.call(
+    const schema = await synergyManagementGatewayApiRequest.call(
         this, 'GET', schemaEndpoint, undefined, undefined,
     ) as SchemaResponse;
 

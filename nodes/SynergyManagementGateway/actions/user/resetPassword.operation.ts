@@ -5,7 +5,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toWriteResult } from '../../helpers/writeResult';
 import { apiPath } from '../../transport/apiPath';
 
@@ -56,7 +56,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		const mustChangePasswordAtLogon = this.getNodeParameter('mustChangePasswordAtLogon', i) as boolean;
 
 		try {
-			const response = await activeDirectoryApiRequest.call(this, 'POST', apiPath`/ad/users/${userId}/reset-password`, undefined, {
+			const response = await synergyManagementGatewayApiRequest.call(this, 'POST', apiPath`/ad/users/${userId}/reset-password`, undefined, {
 				newPassword,
 				mustChangePasswordAtLogon,
 			});

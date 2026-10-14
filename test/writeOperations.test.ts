@@ -29,8 +29,8 @@ const pending = {
 
 const calls: Array<{ method: string; endpoint: string }> = [];
 
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn(async (method: string, endpoint: string) => {
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn(async (method: string, endpoint: string) => {
 		calls.push({ method, endpoint });
 		if (method !== 'GET') {
 			return { ...pending };

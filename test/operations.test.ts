@@ -5,18 +5,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 //  - computer/update must use PATCH (the API has no PUT route)
 //  - object/update must send a FLAT body (no "Attributes" wrapper)
 //  - object/create must forward attribute name -> value pairs
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn().mockResolvedValue({ id: 'result-id' }),
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn().mockResolvedValue({ id: 'result-id' }),
 }));
 
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import * as computerUpdate from '../nodes/SynergyManagementGateway/actions/computer/update.operation';
 import * as objectUpdate from '../nodes/SynergyManagementGateway/actions/object/update.operation';
 import * as objectCreate from '../nodes/SynergyManagementGateway/actions/object/create.operation';
 import * as operationGetWaiting from '../nodes/SynergyManagementGateway/actions/operation/getWaiting.operation';
 import * as operationGetById from '../nodes/SynergyManagementGateway/actions/operation/getById.operation';
 
-const transport = vi.mocked(activeDirectoryApiRequest);
+const transport = vi.mocked(synergyManagementGatewayApiRequest);
 
 function makeContext(params: Record<string, unknown>) {
 	return {

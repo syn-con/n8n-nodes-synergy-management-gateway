@@ -17,8 +17,8 @@ const OPERATION_ID = '9e3a7c1d-2b4f-4c8e-a1d0-5f6b7c8d9e01';
 
 let calls = 0;
 
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn(async () => {
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn(async () => {
 		calls++;
 		const error = new Error('The operation requires approval.') as Error & Record<string, unknown>;
 		error.adErrorCode = 'Operation.ApprovalRequired';

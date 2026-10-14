@@ -1,5 +1,5 @@
 import type { ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
-import { activeDirectoryApiRequest } from '../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../transport/synergyManagementGatewayApiRequest';
 import { apiPath, routeSegment } from '../transport/apiPath';
 import type { SchemaResponse } from './resourceMapping';
 
@@ -10,7 +10,7 @@ async function loadSchemaList(
 ): Promise<INodePropertyOptions[]> {
 
     
-    const schema = await activeDirectoryApiRequest.call(
+    const schema = await synergyManagementGatewayApiRequest.call(
         this,
         'GET',
         apiPath`/ad/${routeSegment(resource)}/schema`,
@@ -58,7 +58,7 @@ export async function getOuSchemaAttributesOptions(
 export async function getSavedLdapFiltersOptions(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
-	const response = (await activeDirectoryApiRequest.call(
+	const response = (await synergyManagementGatewayApiRequest.call(
 		this,
 		'GET',
 		'/saved-ldap-filters',

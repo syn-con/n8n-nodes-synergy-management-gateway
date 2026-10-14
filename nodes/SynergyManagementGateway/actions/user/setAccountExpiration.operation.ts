@@ -5,7 +5,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath } from '../../transport/apiPath';
 import { toWriteResult } from '../../helpers/writeResult';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
@@ -67,7 +67,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			if (action === 'clear') {
 				// DELETE clears the expiry. The PUT route accepts a null expiresAt to the same effect, but
 				// DELETE states the intent in the method and needs no body.
-				response = await activeDirectoryApiRequest.call(
+				response = await synergyManagementGatewayApiRequest.call(
 					this,
 					'DELETE',
 					apiPath`/ad/users/${userId}/account-expiration`,
@@ -78,7 +78,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 				const expiresAt = this.getNodeParameter('expiresAt', i) as string;
 
 				// qs is the third argument, body the fourth — pass undefined for the one not used.
-				response = await activeDirectoryApiRequest.call(
+				response = await synergyManagementGatewayApiRequest.call(
 					this,
 					'PUT',
 					apiPath`/ad/users/${userId}/account-expiration`,

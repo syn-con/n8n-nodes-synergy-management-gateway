@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn().mockResolvedValue({}),
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn().mockResolvedValue({}),
 }));
 
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import * as preview from '../nodes/SynergyManagementGateway/actions/organizationalUnit/previewAccountState.operation';
 import * as enableAccounts from '../nodes/SynergyManagementGateway/actions/organizationalUnit/enableAccounts.operation';
 import * as disableAccounts from '../nodes/SynergyManagementGateway/actions/organizationalUnit/disableAccounts.operation';
 import { description as ouDescription } from '../nodes/SynergyManagementGateway/actions/organizationalUnit';
 
-const transport = vi.mocked(activeDirectoryApiRequest);
+const transport = vi.mocked(synergyManagementGatewayApiRequest);
 const ouId = '44444444-4444-4444-4444-444444444444';
 
 function makeContext(params: Record<string, unknown>, continueOnFail = false) {

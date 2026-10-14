@@ -8,7 +8,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath } from '../../transport/apiPath';
 import { WAITING_TO_APPROVE } from '../../transport/approvalPending';
 
@@ -139,7 +139,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 			// Poll-first: the decision may already be in by the time this node runs.
 			for (;;) {
-				operation = (await activeDirectoryApiRequest.call(
+				operation = (await synergyManagementGatewayApiRequest.call(
 					this,
 					'GET',
 					apiPath`/operations/${operationId}`,

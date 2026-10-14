@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
 
 export const properties: INodeProperties[] = [
@@ -137,7 +137,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 				if (ldapFilter) qs['ldapFilter'] = ldapFilter;
 				if (continuationToken) qs['continuationToken'] = continuationToken;
 
-				const response = (await activeDirectoryApiRequest.call(
+				const response = (await synergyManagementGatewayApiRequest.call(
 					this,
 					'GET',
 					'/ad/accounts/search',

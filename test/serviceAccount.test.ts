@@ -2,17 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Transport mocked so each operation's method, path and body can be asserted. For a resource whose write
 // operations hand out credentials and delete service identities, the body is the contract worth pinning.
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn().mockResolvedValue({ ok: true }),
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn().mockResolvedValue({ ok: true }),
 }));
 
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import * as serviceAccount from '../nodes/SynergyManagementGateway/actions/serviceAccount';
 import { SynergyManagementGateway } from '../nodes/SynergyManagementGateway/SynergyManagementGateway.node';
 
 const nodeDescription = new SynergyManagementGateway().description;
 
-const transport = vi.mocked(activeDirectoryApiRequest);
+const transport = vi.mocked(synergyManagementGatewayApiRequest);
 
 const ACCOUNT_ID = '11111111-2222-3333-4444-555555555555';
 const COMPUTER_ID = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';

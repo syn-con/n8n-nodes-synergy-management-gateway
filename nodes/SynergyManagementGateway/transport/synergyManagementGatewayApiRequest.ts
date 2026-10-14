@@ -80,7 +80,7 @@ function approvalPendingError(context: RequestContext, approval: ApprovalPending
  * keep this order at every call site. Pass `undefined` for whichever a request omits
  * (e.g. GET → `qs, undefined`; POST/PATCH → `undefined, body`).
  */
-export async function activeDirectoryApiRequest(
+export async function synergyManagementGatewayApiRequest(
 	this: IExecuteFunctions | IExecuteSingleFunctions | IHookFunctions | ILoadOptionsFunctions | ITriggerFunctions,
 	method: IHttpRequestMethods,
 	endpoint: string,

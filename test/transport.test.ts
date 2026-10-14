@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import type { IHttpRequestOptions } from 'n8n-workflow';
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 
 /**
- * Guards the argument order of `activeDirectoryApiRequest(method, endpoint, qs, body)`.
+ * Guards the argument order of `synergyManagementGatewayApiRequest(method, endpoint, qs, body)`.
  *
  * `qs` and `body` are both `IDataObject | undefined`, so swapping them is invisible to the
  * TypeScript compiler. These tests assert at runtime that the 3rd arg lands on the query
@@ -28,10 +28,10 @@ function makeContext(captured: { options?: IHttpRequestOptions; credentialType?:
 	};
 }
 
-describe('activeDirectoryApiRequest argument order', () => {
+describe('synergyManagementGatewayApiRequest argument order', () => {
 	it('routes the 3rd argument (qs) to options.qs on a GET', async () => {
 		const captured: { options?: IHttpRequestOptions } = {};
-		await activeDirectoryApiRequest.call(
+		await synergyManagementGatewayApiRequest.call(
 			makeContext(captured) as never,
 			'GET',
 			'/ad/users',
@@ -45,7 +45,7 @@ describe('activeDirectoryApiRequest argument order', () => {
 
 	it('routes the 4th argument (body) to options.body on a POST', async () => {
 		const captured: { options?: IHttpRequestOptions } = {};
-		await activeDirectoryApiRequest.call(
+		await synergyManagementGatewayApiRequest.call(
 			makeContext(captured) as never,
 			'POST',
 			'/ad/users',
@@ -58,10 +58,10 @@ describe('activeDirectoryApiRequest argument order', () => {
 	});
 });
 
-describe('activeDirectoryApiRequest authentication', () => {
+describe('synergyManagementGatewayApiRequest authentication', () => {
 	it('authenticates through the credential and never sets the API key itself', async () => {
 		const captured: { options?: IHttpRequestOptions; credentialType?: string } = {};
-		await activeDirectoryApiRequest.call(makeContext(captured) as never, 'GET', '/ad/users', undefined, undefined);
+		await synergyManagementGatewayApiRequest.call(makeContext(captured) as never, 'GET', '/ad/users', undefined, undefined);
 
 		// The key is added by the credential's `authenticate`, which also refuses anything but https.
 		expect(captured.credentialType).toBe('synergyManagementGatewayApi');

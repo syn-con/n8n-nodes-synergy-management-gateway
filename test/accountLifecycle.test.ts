@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn().mockResolvedValue({}),
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn().mockResolvedValue({}),
 }));
 
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import * as userUnlock from '../nodes/SynergyManagementGateway/actions/user/unlock.operation';
 import * as userSearchByState from '../nodes/SynergyManagementGateway/actions/user/searchByState.operation';
 import * as userGetGroups from '../nodes/SynergyManagementGateway/actions/user/getGroups.operation';
@@ -12,7 +12,7 @@ import * as groupGetMembers from '../nodes/SynergyManagementGateway/actions/grou
 import * as objectMove from '../nodes/SynergyManagementGateway/actions/object/move.operation';
 import * as objectRename from '../nodes/SynergyManagementGateway/actions/object/rename.operation';
 
-const transport = vi.mocked(activeDirectoryApiRequest);
+const transport = vi.mocked(synergyManagementGatewayApiRequest);
 
 function makeContext(params: Record<string, unknown>, continueOnFail = false) {
 	return {

@@ -5,7 +5,7 @@ import {
 	routeSegment,
 	InvalidPathParameterError,
 } from '../nodes/SynergyManagementGateway/transport/apiPath';
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import { toErrorOutput } from '../nodes/SynergyManagementGateway/helpers/errorOutput';
 
 /**
@@ -54,7 +54,7 @@ describe('apiPath', () => {
 	});
 });
 
-describe('activeDirectoryApiRequest path backstop', () => {
+describe('synergyManagementGatewayApiRequest path backstop', () => {
 	function makeContext(sent: string[]) {
 		return {
 			getCredentials: async () => ({
@@ -83,14 +83,14 @@ describe('activeDirectoryApiRequest path backstop', () => {
 	])('refuses %s without sending it', async (endpoint) => {
 		const sent: string[] = [];
 		await expect(
-			activeDirectoryApiRequest.call(makeContext(sent) as never, 'DELETE', endpoint, undefined, undefined),
+			synergyManagementGatewayApiRequest.call(makeContext(sent) as never, 'DELETE', endpoint, undefined, undefined),
 		).rejects.toThrow(/Invalid API path/);
 		expect(sent).toEqual([]);
 	});
 
 	it('sends an ordinary path', async () => {
 		const sent: string[] = [];
-		await activeDirectoryApiRequest.call(
+		await synergyManagementGatewayApiRequest.call(
 			makeContext(sent) as never,
 			'DELETE',
 			`/ad/users/${GUID}`,

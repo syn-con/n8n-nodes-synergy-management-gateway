@@ -7,7 +7,7 @@ import {
 
 
 import {  updateDisplayOptions } from 'n8n-workflow';
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath, routeSegment } from '../../transport/apiPath';
 import { toWriteResult } from '../../helpers/writeResult';
 import { expectedClassProperty, typedRouteSegmentFor } from '../../helpers/typedObjectRoute';
@@ -54,7 +54,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
             // moving it; otherwise fall back to the unchecked generic route.
             const segment = typedRouteSegmentFor(expectedClass) ?? 'objects';
 
-            const response = await activeDirectoryApiRequest.call(this, 'PATCH', apiPath`/ad/${routeSegment(segment)}/${objectId}/move`, undefined, {
+            const response = await synergyManagementGatewayApiRequest.call(this, 'PATCH', apiPath`/ad/${routeSegment(segment)}/${objectId}/move`, undefined, {
                 newParentDistinguishedName: newParentDistinguishedName,
             }) as IDataObject;
             returnData.push({

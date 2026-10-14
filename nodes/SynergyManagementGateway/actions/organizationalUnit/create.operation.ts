@@ -5,7 +5,7 @@ import {
 	type INodeProperties,
 	updateDisplayOptions,
 } from 'n8n-workflow';
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toWriteResult } from '../../helpers/writeResult';
 import { validateAttributes, mapAttributes } from '../../helpers/adAttributes';
 
@@ -79,7 +79,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 			if (path) body.path = path;
 			if (Object.keys(mappedAttributes).length > 0) body.attributes = mappedAttributes;
 
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'POST',
 				'/ad/organization-units',

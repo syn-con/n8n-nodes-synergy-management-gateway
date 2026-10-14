@@ -6,7 +6,7 @@ import {
 } from 'n8n-workflow';
 
 import {  updateDisplayOptions } from 'n8n-workflow';
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath } from '../../transport/apiPath';
 import { toWriteResult } from '../../helpers/writeResult';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
@@ -49,7 +49,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
         const objectId = this.getNodeParameter('objectId', i) as string;
 
         try {
-            const response = await activeDirectoryApiRequest.call(this, 'DELETE', apiPath`/ad/objects/${objectId}`, undefined, undefined) as IDataObject | null;
+            const response = await synergyManagementGatewayApiRequest.call(this, 'DELETE', apiPath`/ad/objects/${objectId}`, undefined, undefined) as IDataObject | null;
             returnData.push({
                 json: toWriteResult(response, response ?? { success: true, id: objectId }),
                 pairedItem: { item: i },

@@ -6,7 +6,7 @@ import { NodeApiError, NodeOperationError, type IDataObject, type INode } from '
  * The message alone is not enough to act on: a workflow needs the API's error code to branch,
  * and — when the failure is really an approval gate (HTTP 202) — the operation id, or the handle
  * to the queued change is lost. Those fields are stamped onto the error by
- * `activeDirectoryApiRequest`.
+ * `synergyManagementGatewayApiRequest`.
  */
 export function toErrorOutput(error: unknown): IDataObject {
 	const source = (error ?? {}) as IDataObject & { message?: string };

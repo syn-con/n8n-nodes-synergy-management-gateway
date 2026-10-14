@@ -4,17 +4,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // resource that is the entire contract worth testing: a wrong path surfaces only as a 404 at runtime, and
 // a wrong body on a delegation write means granting the wrong permission to the wrong principal — neither
 // is something a workflow author would notice from the node's output.
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn().mockResolvedValue({ ok: true }),
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn().mockResolvedValue({ ok: true }),
 }));
 
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import * as security from '../nodes/SynergyManagementGateway/actions/security';
 import { SynergyManagementGateway } from '../nodes/SynergyManagementGateway/SynergyManagementGateway.node';
 
 const nodeDescription = new SynergyManagementGateway().description;
 
-const transport = vi.mocked(activeDirectoryApiRequest);
+const transport = vi.mocked(synergyManagementGatewayApiRequest);
 
 const OBJECT_ID = '11111111-2222-3333-4444-555555555555';
 const GROUP_ID = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';

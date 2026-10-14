@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath } from '../../transport/apiPath';
 
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
@@ -42,7 +42,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		try {
 			// 204 when the token carries no groups, which the transport surfaces as an empty body.
 			// Normalising to an array here keeps a downstream node from having to special-case it.
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'GET',
 				apiPath`/ad/users/${accountId}/authorization-groups`,

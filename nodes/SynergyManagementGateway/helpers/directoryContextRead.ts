@@ -4,7 +4,7 @@ import {
 	type INodeExecutionData,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../transport/synergyManagementGatewayApiRequest';
 import { toErrorOutput, toNodeError } from './errorOutput';
 
 /**
@@ -25,7 +25,7 @@ export function createDirectoryContextRead(endpoint: string) {
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				const response = (await activeDirectoryApiRequest.call(
+				const response = (await synergyManagementGatewayApiRequest.call(
 					this,
 					'GET',
 					endpoint,

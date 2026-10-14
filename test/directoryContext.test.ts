@@ -4,17 +4,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // and how it shapes the response, without an HTTP call. The endpoint mapping is the whole contract of
 // this resource: every operation is a parameterless GET, so a wrong path is the only way it can break —
 // and it would surface only as a 404 at runtime.
-vi.mock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-	activeDirectoryApiRequest: vi.fn().mockResolvedValue({ ok: true }),
+vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+	synergyManagementGatewayApiRequest: vi.fn().mockResolvedValue({ ok: true }),
 }));
 
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import * as directoryContext from '../nodes/SynergyManagementGateway/actions/directoryContext';
 import { SynergyManagementGateway } from '../nodes/SynergyManagementGateway/SynergyManagementGateway.node';
 
 const nodeDescription = new SynergyManagementGateway().description;
 
-const transport = vi.mocked(activeDirectoryApiRequest);
+const transport = vi.mocked(synergyManagementGatewayApiRequest);
 
 function makeContext(continueOnFail = false) {
 	return {

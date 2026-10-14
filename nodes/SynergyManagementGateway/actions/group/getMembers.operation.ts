@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath } from '../../transport/apiPath';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
 
@@ -49,7 +49,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		try {
 			// qs is the third argument (query string before body); omitted entirely when not recursive
 			// so the API default governs.
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'GET',
 				apiPath`/ad/groups/${groupId}/members`,

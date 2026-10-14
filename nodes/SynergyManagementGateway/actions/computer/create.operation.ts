@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toWriteResult } from '../../helpers/writeResult';
 import { accountPolicyProperties } from '../shared/accountPolicy.properties';
 import { getAccountPolicyFromParams } from '../../helpers/accountPolicy';
@@ -109,7 +109,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 			if (Object.keys(mappedAttributes).length > 0) body.attributes = mappedAttributes;
 
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'POST',
 				'/ad/computers',

@@ -6,7 +6,7 @@ import {
 	updateDisplayOptions,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { apiPath } from '../../transport/apiPath';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
 
@@ -39,7 +39,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 		const computerId = this.getNodeParameter('computerId', i) as string;
 
 		try {
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'GET',
 				apiPath`/ad/computers/${computerId}/service-accounts`,

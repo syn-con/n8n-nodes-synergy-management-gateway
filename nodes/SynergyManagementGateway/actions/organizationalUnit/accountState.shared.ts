@@ -6,7 +6,7 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 
-import { activeDirectoryApiRequest } from '../../transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { isApprovalPending } from '../../transport/approvalPending';
 import { apiPath } from '../../transport/apiPath';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
@@ -126,7 +126,7 @@ export async function executePreview(this: IExecuteFunctions): Promise<INodeExec
 		const action = this.getNodeParameter('planAction', i, 'disable') as string;
 
 		try {
-			const response = (await activeDirectoryApiRequest.call(
+			const response = (await synergyManagementGatewayApiRequest.call(
 				this,
 				'GET',
 				apiPath`/ad/organization-units/${ouId}/accounts/plan`,
@@ -165,7 +165,7 @@ export async function executeRun(
 					? apiPath`/ad/organization-units/${ouId}/accounts/enable`
 					: apiPath`/ad/organization-units/${ouId}/accounts/disable`;
 
-			const response = await activeDirectoryApiRequest.call(this, 'POST', path, undefined, {
+			const response = await synergyManagementGatewayApiRequest.call(this, 'POST', path, undefined, {
 				kinds,
 				scope,
 			});

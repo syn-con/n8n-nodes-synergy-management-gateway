@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 
-import { activeDirectoryApiRequest } from '../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest';
+import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import {
 	parseApprovalPending,
 	isApprovalPending,
@@ -72,11 +72,11 @@ describe('parseApprovalPending', () => {
 	});
 });
 
-describe('activeDirectoryApiRequest on 202', () => {
+describe('synergyManagementGatewayApiRequest on 202', () => {
 	it('throws with the operation id attached by default', async () => {
 		const ctx = makeTransportContext({ statusCode: 202, body: acceptedBody });
 
-		const error = await activeDirectoryApiRequest
+		const error = await synergyManagementGatewayApiRequest
 			.call(ctx as never, 'POST', '/ad/users', undefined, { name: 'jdoe' })
 			.then(
 				() => null,
@@ -96,7 +96,7 @@ describe('activeDirectoryApiRequest on 202', () => {
 			{ options: { onApprovalRequired: 'continue' } },
 		);
 
-		const result = await activeDirectoryApiRequest.call(
+		const result = await synergyManagementGatewayApiRequest.call(
 			ctx as never,
 			'POST',
 			'/ad/users',
@@ -113,7 +113,7 @@ describe('activeDirectoryApiRequest on 202', () => {
 	it('leaves a normal 201 response untouched', async () => {
 		const ctx = makeTransportContext({ statusCode: 201, body: { objectGuid: 'abc' } });
 
-		const result = await activeDirectoryApiRequest.call(
+		const result = await synergyManagementGatewayApiRequest.call(
 			ctx as never,
 			'POST',
 			'/ad/users',
@@ -130,7 +130,7 @@ describe('activeDirectoryApiRequest on 202', () => {
 			body: { errorCode: 'AD.User.Invalid', detail: 'bad request' },
 		});
 
-		const error = await activeDirectoryApiRequest
+		const error = await synergyManagementGatewayApiRequest
 			.call(ctx as never, 'POST', '/ad/users', undefined, { name: '' })
 			.then(
 				() => null,
@@ -187,8 +187,8 @@ describe('operation/waitForApproval', () => {
 
 	async function loadWithResponses(responses: Array<Record<string, unknown>>) {
 		const calls: string[] = [];
-		vi.doMock('../nodes/SynergyManagementGateway/transport/activeDirectoryApiRequest', () => ({
-			activeDirectoryApiRequest: vi.fn(async (_m: string, endpoint: string) => {
+		vi.doMock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest', () => ({
+			synergyManagementGatewayApiRequest: vi.fn(async (_m: string, endpoint: string) => {
 				calls.push(endpoint);
 				return responses[Math.min(calls.length - 1, responses.length - 1)];
 			}),
