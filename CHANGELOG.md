@@ -5,11 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.5](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.4...2.0.5)
+## [2.0.6](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.5...2.0.6)
+
+### Commits
+
+- Keep only the n8n-community-node-package keyword [`b3f56e2`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/b3f56e21ec8c3119dd3a8801d834f3afd29887c0)
+
+## [2.0.5](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.4...2.0.5) - 2026-10-19
 
 ### Commits
 
 - Link the product name in the README to its product page [`b476781`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/b4767812025d2c3a517dc944a99276a96b6490b1)
+- Release 2.0.5 [`f15d80d`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/f15d80d27cb4aa77ce2d9db1999bf79ffc69665d)
 
 ## [2.0.4](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.3...2.0.4) - 2026-10-14
 
