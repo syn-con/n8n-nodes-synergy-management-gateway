@@ -3,7 +3,7 @@
 [![NPM Version](https://img.shields.io/npm/v/@synergyconsulting/n8n-nodes-synergy-management-gateway?style=flat-square)](https://www.npmjs.com/package/@synergyconsulting/n8n-nodes-synergy-management-gateway)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-An [n8n](https://n8n.io) community node for **SYNERGY Management Gateway for Active Directory**. It manages Active
+An [n8n](https://n8n.io) community node for **[SYNERGY Management Gateway for Active Directory](https://www.synergy.eu/management-gateway-for-active-directory)**. It manages Active
 Directory through your own SYNERGY Management Gateway installation, using an API key: users, groups, computers,
 organizational units, generic directory objects, managed service accounts, delegations and service principal names,
 plus read-only views of the forest, domain and sites.
