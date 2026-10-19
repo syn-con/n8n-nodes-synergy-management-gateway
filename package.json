@@ -20,16 +20,7 @@
     "dist"
   ],
   "keywords": [
-    "n8n",
-    "n8n-nodes",
-    "n8n-community-node-package",
-    "synergy",
-    "management-gateway",
-    "active-directory",
-    "activedirectory",
-    "ldap",
-    "identity",
-    "authentication"
+    "n8n-community-node-package"
   ],
   "author": {
     "name": "SYNERGY",
