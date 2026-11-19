@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.6](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.5...2.0.6)
+## [2.1.0](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.6...2.1.0) - 2026-11-19
+
+### Commits
+
+- Base DN fields pick a container from the directory tree, or take a raw DN [`a26abb6`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/a26abb63099fba598ef17922446675f9de37614e)
+
+## [2.0.6](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.5...2.0.6) - 2026-10-19
 
 ### Commits
 
