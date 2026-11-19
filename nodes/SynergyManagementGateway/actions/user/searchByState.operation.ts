@@ -7,6 +7,7 @@ import {
 } from 'n8n-workflow';
 
 import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
 
 export const properties: INodeProperties[] = [
@@ -62,13 +63,10 @@ export const properties: INodeProperties[] = [
 		displayOptions: { show: { state: ['Inactive'] } },
 		description: 'Days of inactivity. Minimum 15, because AD refreshes lastLogonTimestamp only every 14 days by default.',
 	},
-	{
-		displayName: 'Base DN',
-		name: 'baseDn',
-		type: 'string',
-		default: '',
-		description: 'Base DN to search from. Leave empty to search the whole domain.',
-	},
+	...baseDnProperties('baseDn', 'Base DN', {
+		required: false,
+		description: 'The container to search from: pick it from the directory tree, or type its distinguished name. Leave empty to search the whole domain.',
+	}),
 	{
 		displayName: 'Additional LDAP Filter',
 		name: 'ldapFilter',
@@ -112,7 +110,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 	for (let i = 0; i < items.length; i++) {
 		const state = this.getNodeParameter('state', i) as string;
-		const baseDn = this.getNodeParameter('baseDn', i, '') as string;
+		const baseDn = readBaseDn.call(this, 'baseDn', i);
 		const ldapFilter = this.getNodeParameter('ldapFilter', i, '') as string;
 		const returnAll = this.getNodeParameter('returnAll', i, false) as boolean;
 		const limit = returnAll ? Number.MAX_SAFE_INTEGER : (this.getNodeParameter('limit', i, 50) as number);

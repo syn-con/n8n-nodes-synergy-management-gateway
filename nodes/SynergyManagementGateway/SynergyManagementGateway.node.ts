@@ -18,6 +18,7 @@ import * as security from './actions/security';
 import * as serviceAccount from './actions/serviceAccount';
 import { nodeOptionsProperties } from './transport/approvalPending';
 import { toErrorOutput, toNodeError } from './helpers/errorOutput';
+import { searchContainers } from './methods/listSearch';
 import { getUserSchemaAttributes, getGroupSchemaAttributes, getComputerSchemaAttributes, getOuSchemaAttributes } from './methods/resourceMapping';
 import {
     getUserSchemaAttributesOptions,
@@ -40,7 +41,8 @@ export class SynergyManagementGateway implements INodeType
             dark: 'file:../../icons/synergy.dark.svg',
         },
         group: ['transform'],
-        version: 1,
+        // 1.1: the Base DN fields became a resource locator (tree list or raw DN); 1 keeps the plain string field.
+        version: [1, 1.1],
         subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
         description: 'Manage Active Directory users, groups, computers and organizational units through the SYNERGY Management Gateway for Active Directory API',
         defaults: {
@@ -85,6 +87,9 @@ export class SynergyManagementGateway implements INodeType
     };
 
     methods = {
+        listSearch: {
+            searchContainers,
+        },
         resourceMapping: {
             getUserSchemaAttributes,
             getGroupSchemaAttributes,

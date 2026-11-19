@@ -8,6 +8,7 @@ import {
 import { updateDisplayOptions } from 'n8n-workflow';
 
 import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
 
 const BATCH_SIZE = 100;
@@ -28,13 +29,11 @@ export const properties: INodeProperties[] =
         default: 'user',
         required: true,
     },
-    {
-        displayName: 'Path',
-        name: 'path',
-        type: 'string',
-        default: '',
+    ...baseDnProperties('path', 'Base DN', {
         required: true,
-    },
+        legacyDisplayName: 'Path',
+        description: 'The container to search from: pick it from the directory tree, or type its distinguished name',
+    }),
     //LDAP filter
     {
         displayName: 'LDAP Filter',
@@ -112,7 +111,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 	for (let i = 0; i < items.length; i++) {
 		try {
 			const objectType = this.getNodeParameter('objectType', i) as string;
-			const path = this.getNodeParameter('path', i) as string;
+			const path = readBaseDn.call(this, 'path', i);
 			const ldapFilter = this.getNodeParameter('ldapFilter', i) as string;
 			const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 			const limit = this.getNodeParameter('limit', i, 500) as number;

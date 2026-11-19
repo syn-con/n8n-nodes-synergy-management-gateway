@@ -8,19 +8,16 @@ import {
 
 import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
 
 const BATCH_SIZE = 100;
 
 export const properties: INodeProperties[] = [
-	{
-		displayName: 'Base DN',
-		name: 'baseDn',
-		type: 'string',
-		default: '',
+	...baseDnProperties('baseDn', 'Base DN', {
 		required: true,
-		description: 'The Distinguished Name of the container to search from (required by the API)',
-	},
+		description: 'The container to search from: pick it from the directory tree, or type its distinguished name',
+	}),
 	{
 		displayName: 'LDAP Filter',
 		name: 'ldapFilter',
@@ -94,7 +91,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 	const returnData: INodeExecutionData[] = [];
 
 	for (let i = 0; i < items.length; i++) {
-		const baseDn = this.getNodeParameter('baseDn', i) as string;
+		const baseDn = readBaseDn.call(this, 'baseDn', i);
 		const ldapFilter = this.getNodeParameter('ldapFilter', i) as string;
 		const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 		const limit = this.getNodeParameter('limit', i,100) as number;
