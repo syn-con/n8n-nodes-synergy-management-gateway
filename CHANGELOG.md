@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.1.0...2.2.0) - 2026-11-24
+
+### Commits
+
+- Create operations pick their parent container from the directory tree, or take a raw DN [`68d3e30`](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/commit/68d3e3039772781ace22770ce464c2f197d1a70f)
+
 ## [2.1.0](https://github.com/syn-con/n8n-nodes-synergy-management-gateway/compare/2.0.6...2.1.0) - 2026-11-19
 
 ### Commits
