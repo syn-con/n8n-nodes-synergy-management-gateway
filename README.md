@@ -88,6 +88,10 @@ the key may do what your workflow asks.
 
 ### Writing
 
+- **Where a new object goes.** Every *Create* operation takes the parent container as **Path**: pick it from the
+  directory tree (**From List**), or give its distinguished name (**By DN**), typed or as an expression. Users,
+  computers, groups, organizational units and objects need one; a service account without one goes to the domain's
+  Managed Service Accounts container. Nodes saved before version 1.2 keep the plain text field they were built with.
 - **Attribute updates** use Replace, Add, Remove and Clear. Attribute names are checked against the directory schema,
   which the node loads from the API, and values against each attribute's type: a `Bool` takes a boolean (or
   `true`/`false`); a `GeneralizedTime` takes a date — an ISO string, `$now`, or Active Directory's own

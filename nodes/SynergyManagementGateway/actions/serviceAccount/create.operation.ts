@@ -9,6 +9,7 @@ import {
 import { synergyManagementGatewayApiRequest } from '../../transport/synergyManagementGatewayApiRequest';
 import { toWriteResult } from '../../helpers/writeResult';
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 
 // POST /ad/service-accounts — New-ADServiceAccount.
 export const properties: INodeProperties[] = [
@@ -53,12 +54,21 @@ export const properties: INodeProperties[] = [
 		description:
 			'Comma-separated object GUIDs of the hosts or the group allowed to retrieve the managed password. Leave empty and the account is inert: nothing can obtain its password, so no service can authenticate as it. Normally the computer accounts or a group containing them',
 	},
+	// From node version 1.2 the parent container is a field of its own, picked from the directory tree or given as
+	// a DN. Versions 1 and 1.1 keep it inside Additional Fields as a plain string, so their saved workflows still read it.
+	...baseDnProperties('path', 'Path', {
+		required: false,
+		description:
+			'Container the account is created in: pick it from the directory tree, or give its DN. Empty uses the domain’s Managed Service Accounts container, which is where the PowerShell module puts them and therefore where an administrator will look.',
+		since: 1.2,
+	}).filter((p) => p.type === 'resourceLocator'),
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
 		type: 'collection',
 		placeholder: 'Add Field',
 		default: {},
+		displayOptions: { show: { '@version': [{ _cnd: { lt: 1.2 } }] } },
 		options: [
 			{
 				displayName: 'Description',
@@ -87,6 +97,51 @@ export const properties: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				description: 'Parent container DN. Defaults to the domain’s Managed Service Accounts container, which is where the PowerShell module puts them and therefore where an administrator will look.',
+			},
+			{
+				displayName: 'SAM Account Name',
+				name: 'samAccountName',
+				type: 'string',
+				default: '',
+				description: 'Defaults to the name. A trailing "$" is appended automatically if absent.',
+			},
+			{
+				displayName: 'Service Principal Names',
+				name: 'servicePrincipalNames',
+				type: 'string',
+				default: '',
+				description: 'Comma-separated SPNs to register on the account',
+			},
+		],
+	},
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: { show: { '@version': [{ _cnd: { gte: 1.2 } }] } },
+		options: [
+			{
+				displayName: 'Description',
+				name: 'description',
+				type: 'string',
+				default: '',
+				description: 'Free-text description',
+			},
+			{
+				displayName: 'DNS Host Name',
+				name: 'dnsHostName',
+				type: 'string',
+				default: '',
+				description: 'DNS host name the service is reached at. A group account needs this to be usable.',
+			},
+			{
+				displayName: 'Managed Password Interval (Days)',
+				name: 'managedPasswordIntervalDays',
+				type: 'number',
+				default: 30,
+				description: 'Rotation interval for a group account. Defaults to 30 and is IMMUTABLE — Active Directory fixes it at creation and ignores later writes, so a different interval means a new account.',
 			},
 			{
 				displayName: 'SAM Account Name',
@@ -136,7 +191,9 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 		if (additional['description']) body['description'] = additional['description'];
 		if (additional['dnsHostName']) body['dnsHostName'] = additional['dnsHostName'];
-		if (additional['path']) body['path'] = additional['path'];
+		const path =
+			this.getNode().typeVersion >= 1.2 ? readBaseDn.call(this, 'path', i) : ((additional['path'] as string | undefined) ?? '').trim();
+		if (path) body['path'] = path;
 		if (additional['samAccountName']) body['samAccountName'] = additional['samAccountName'];
 
 		const spns = splitList(additional['servicePrincipalNames'] as string | undefined);

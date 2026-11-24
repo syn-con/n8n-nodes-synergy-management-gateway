@@ -13,6 +13,7 @@ import { getAccountPolicyFromParams } from '../../helpers/accountPolicy';
 import { validateAttributes, mapAttributes } from '../../helpers/adAttributes';
 
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 
 export const properties: INodeProperties[] = [
 	{
@@ -23,13 +24,13 @@ export const properties: INodeProperties[] = [
 		required: true,
 		description: 'CN of the computer (max 15 characters)',
 	},
-	{
-		displayName: 'Path',
-		name: 'path',
-		type: 'string',
-		default: '',
-		description: 'DN of the parent OU',
-	},
+	...baseDnProperties('path', 'Path', {
+		required: true,
+		description: 'Container the computer is created in: pick it from the directory tree, or give its DN',
+		// The API refuses an empty path; the plain field of versions 1 and 1.1 stays optional as it always was.
+		legacyRequired: false,
+		since: 1.2,
+	}),
 	{
 		displayName: 'SAM Account Name',
 		name: 'samAccountName',
@@ -89,7 +90,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 	for (let i = 0; i < items.length; i++) {
 		const name = this.getNodeParameter('name', i) as string;
-		const path = this.getNodeParameter('path', i) as string;
+		const path = readBaseDn.call(this, 'path', i);
 		const samAccountName = this.getNodeParameter('samAccountName', i) as string;
 		const password = this.getNodeParameter('password', i) as string;
 		const accountPolicy = getAccountPolicyFromParams(this, i);

@@ -11,6 +11,7 @@ import { toWriteResult } from '../../helpers/writeResult';
 import { validateAttributes, mapAttributes } from '../../helpers/adAttributes';
 
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 
 export const properties: INodeProperties[] = [
 	{
@@ -21,13 +22,13 @@ export const properties: INodeProperties[] = [
 		required: true,
 		description: 'CN of the group (max 15 characters)',
 	},
-	{
-		displayName: 'Path',
-		name: 'path',
-		type: 'string',
-		default: '',
-		description: 'DN of the parent OU',
-	},
+	...baseDnProperties('path', 'Path', {
+		required: true,
+		description: 'Container the group is created in: pick it from the directory tree, or give its DN',
+		// The API refuses an empty path; the plain field of versions 1 and 1.1 stays optional as it always was.
+		legacyRequired: false,
+		since: 1.2,
+	}),
 	{
 		displayName: 'Group Category',
 		name: 'groupCategory',
@@ -92,7 +93,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 	for (let i = 0; i < items.length; i++) {
 		const name = this.getNodeParameter('name', i) as string;
-		const path = this.getNodeParameter('path', i) as string;
+		const path = readBaseDn.call(this, 'path', i);
 		const groupCategory = this.getNodeParameter('groupCategory', i) as string;
 		const groupScope = this.getNodeParameter('groupScope', i) as string;
 

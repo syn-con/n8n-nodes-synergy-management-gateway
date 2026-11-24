@@ -1,30 +1,40 @@
 import type { IExecuteFunctions, INodeProperties } from 'n8n-workflow';
 
 /**
- * The "Base DN" (search root) field, shared by every operation that searches beneath a container.
+ * A container field taking a DN: the "Base DN" (search root) of the searches, and the parent container
+ * ("Path") of the create operations.
  *
- * From node version 1.1 it is a resource locator with two modes:
+ * From the node version given as `since` it is a resource locator with two modes:
  * - **From List** — containers read from the directory tree (`searchContainers`, the browser API).
  * - **By DN** — the distinguished name typed as a raw string, or an expression.
  *
- * Version 1 keeps the plain string field it always had. A workflow saved with version 1 stores a bare string
- * under the same parameter name, which a resource locator would flag as empty; keeping the old field for that
- * version leaves those workflows untouched, and `readBaseDn` accepts either shape.
+ * `since` is 1.1 for the search roots and 1.2 for the create operations' parent container. Older versions keep
+ * the plain string field they always had: a workflow saved with them stores a bare string under the same
+ * parameter name, which a resource locator would flag as empty. Keeping the old field for those versions leaves
+ * such workflows untouched, and `readBaseDn` accepts either shape.
  */
 export function baseDnProperties(
 	name: string,
 	displayName: string,
-	options: { required: boolean; description: string; legacyDisplayName?: string },
+	options: {
+		required: boolean;
+		description: string;
+		legacyDisplayName?: string;
+		/** Whether the old plain field is required; defaults to `required`. */
+		legacyRequired?: boolean;
+		since?: number;
+	},
 ): INodeProperties[] {
+	const since = options.since ?? 1.1;
 	return [
 		{
 			displayName: options.legacyDisplayName ?? displayName,
 			name,
 			type: 'string',
 			default: '',
-			required: options.required,
+			required: options.legacyRequired ?? options.required,
 			description: options.description,
-			displayOptions: { show: { '@version': [1] } },
+			displayOptions: { show: { '@version': [{ _cnd: { lt: since } }] } },
 		},
 		{
 			displayName,
@@ -33,7 +43,7 @@ export function baseDnProperties(
 			default: { mode: 'list', value: '' },
 			required: options.required,
 			description: options.description,
-			displayOptions: { show: { '@version': [{ _cnd: { gte: 1.1 } }] } },
+			displayOptions: { show: { '@version': [{ _cnd: { gte: since } }] } },
 			modes: [
 				{
 					displayName: 'From List',

@@ -13,6 +13,7 @@ import { getAccountPolicyFromParams } from '../../helpers/accountPolicy';
 import { validateAttributes, mapAttributes } from '../../helpers/adAttributes';
 
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 
 export const properties: INodeProperties[] = [
 	{
@@ -23,14 +24,11 @@ export const properties: INodeProperties[] = [
 		required: true,
 		description: 'CN of the user (max 15 characters)',
 	},
-	{
-		displayName: 'User Path',
-		name: 'path',
-		type: 'string',
+	...baseDnProperties('path', 'User Path', {
 		required: true,
-		default: '',
-		description: 'DN of the user',
-	},
+		description: 'Container the user is created in: pick it from the directory tree, or give its DN',
+		since: 1.2,
+	}),
 	{
 		displayName: 'User SAM Account Name',
 		name: 'samAccountName',
@@ -91,7 +89,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
 
 	for (let i = 0; i < items.length; i++) {
 		const name = this.getNodeParameter('name', i) as string;
-		const path = this.getNodeParameter('path', i) as string;
+		const path = readBaseDn.call(this, 'path', i);
 		const samAccountName = this.getNodeParameter('samAccountName', i) as string;
 		const password = this.getNodeParameter('password', i) as string;
 		const accountPolicy = getAccountPolicyFromParams(this, i);

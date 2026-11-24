@@ -11,6 +11,7 @@ import { synergyManagementGatewayApiRequest } from '../../transport/synergyManag
 import { toWriteResult } from '../../helpers/writeResult';
 
 import { toErrorOutput, toNodeError } from '../../helpers/errorOutput';
+import { baseDnProperties, readBaseDn } from '../../helpers/baseDn';
 
 export const properties: INodeProperties[] = 
 [
@@ -35,13 +36,11 @@ export const properties: INodeProperties[] =
         default: '',
         required: true,
     },
-    {
-        displayName: 'Path',
-        name: 'path',
-        type: 'string',
-        default: '',
+    ...baseDnProperties('path', 'Path', {
         required: true,
-    },
+        description: 'Container the object is created in: pick it from the directory tree, or give its DN',
+        since: 1.2,
+    }),
     {
         displayName: 'Attributes',
         name: 'otherAttributes',
@@ -92,7 +91,7 @@ export async function execute(this: IExecuteFunctions): Promise<INodeExecutionDa
     for(let i = 0; i < items.length; i++){
         const objectType = this.getNodeParameter('objectType', i) as string;
         const objectName = this.getNodeParameter('objectName', i) as string;
-        const path = this.getNodeParameter('path', i) as string;
+        const path = readBaseDn.call(this, 'path', i);
         const attributeEntries = this.getNodeParameter('otherAttributes.attribute', i, []) as IDataObject[];
 
         // CreateObjectRequestDto expects `attributes` as a name -> value map.

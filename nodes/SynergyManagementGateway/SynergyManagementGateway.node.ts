@@ -42,7 +42,8 @@ export class SynergyManagementGateway implements INodeType
         },
         group: ['transform'],
         // 1.1: the Base DN fields became a resource locator (tree list or raw DN); 1 keeps the plain string field.
-        version: [1, 1.1],
+        // 1.2: so did the parent container (Path) of every create operation; 1 and 1.1 keep the plain string.
+        version: [1, 1.1, 1.2],
         subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
         description: 'Manage Active Directory users, groups, computers and organizational units through the SYNERGY Management Gateway for Active Directory API',
         defaults: {

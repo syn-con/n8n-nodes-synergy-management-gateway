@@ -7,7 +7,13 @@ vi.mock('../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApi
 import { synergyManagementGatewayApiRequest } from '../nodes/SynergyManagementGateway/transport/synergyManagementGatewayApiRequest';
 import { searchContainers, domainLabel } from '../nodes/SynergyManagementGateway/methods/listSearch';
 import { readBaseDn } from '../nodes/SynergyManagementGateway/helpers/baseDn';
+import type { INodeProperties } from 'n8n-workflow';
 import * as user from '../nodes/SynergyManagementGateway/actions/user';
+import * as computer from '../nodes/SynergyManagementGateway/actions/computer';
+import * as group from '../nodes/SynergyManagementGateway/actions/group';
+import * as organizationalUnit from '../nodes/SynergyManagementGateway/actions/organizationalUnit';
+import * as object from '../nodes/SynergyManagementGateway/actions/object';
+import * as serviceAccount from '../nodes/SynergyManagementGateway/actions/serviceAccount';
 import { SynergyManagementGateway } from '../nodes/SynergyManagementGateway/SynergyManagementGateway.node';
 
 const transport = vi.mocked(synergyManagementGatewayApiRequest);
@@ -162,20 +168,117 @@ describe('readBaseDn', () => {
 
 describe('node description', () => {
 	const description = new SynergyManagementGateway().description;
+	const versionCondition = (p: INodeProperties) =>
+		(p.displayOptions?.show?.['@version'] as Array<{ _cnd: Record<string, number> }> | undefined)?.[0]?._cnd;
 
-	it('is version 1.1 with the container search registered', () => {
-		expect(description.version).toEqual([1, 1.1]);
+	it('is version 1.2 with the container search registered', () => {
+		expect(description.version).toEqual([1, 1.1, 1.2]);
 		expect(new SynergyManagementGateway().methods.listSearch?.searchContainers).toBe(searchContainers);
 	});
 
-	it('keeps the plain string field for version 1 and the locator for 1.1, for every base DN field', () => {
-		const fields = description.properties.filter((p) => p.name === 'baseDn' || p.name === 'path');
-		const v1 = fields.filter((p) => p.type === 'string' && p.displayOptions?.show?.['@version']);
-		const v11 = fields.filter((p) => p.type === 'resourceLocator');
-		expect(v11.length).toBe(6);
-		expect(v1.length).toBe(6);
-		for (const p of v11) {
+	it('keeps the plain string field before 1.1 and the locator from 1.1, for every base DN field', () => {
+		const searchOps = ['getAll', 'searchByState'];
+		const fields = description.properties.filter(
+			(p) =>
+				(p.name === 'baseDn' || p.name === 'path') &&
+				searchOps.some((op) => (p.displayOptions?.show?.operation as string[] | undefined)?.includes(op)),
+		);
+		const plain = fields.filter((p) => p.type === 'string');
+		const locators = fields.filter((p) => p.type === 'resourceLocator');
+		expect(locators.length).toBe(6);
+		expect(plain.length).toBe(6);
+		for (const p of plain) expect(versionCondition(p)).toEqual({ lt: 1.1 });
+		for (const p of locators) {
+			expect(versionCondition(p)).toEqual({ gte: 1.1 });
 			expect(p.modes?.map((m) => m.name)).toEqual(['list', 'dn']);
 		}
+	});
+
+	it('gives every create operation a parent-container locator from 1.2, keeping the old field before it', () => {
+		const resources = ['user', 'computer', 'group', 'organizationalUnit', 'object', 'serviceAccount'];
+		for (const resource of resources) {
+			const fields = description.properties.filter(
+				(p) =>
+					p.name === 'path' &&
+					(p.displayOptions?.show?.resource as string[] | undefined)?.includes(resource) &&
+					(p.displayOptions?.show?.operation as string[] | undefined)?.includes('create'),
+			);
+			const locator = fields.find((p) => p.type === 'resourceLocator');
+			expect(locator, resource).toBeDefined();
+			expect(versionCondition(locator!), resource).toEqual({ gte: 1.2 });
+			expect(locator!.modes?.map((m) => m.name)).toEqual(['list', 'dn']);
+			expect(locator!.modes?.[0].typeOptions?.searchListMethod).toBe('searchContainers');
+			// The API refuses an empty parent for all but the service account, which falls back to the
+			// Managed Service Accounts container.
+			expect(locator!.required, resource).toBe(resource !== 'serviceAccount');
+
+			const plain = fields.find((p) => p.type === 'string');
+			if (resource === 'serviceAccount') {
+				// Before 1.2 its path lives in Additional Fields.
+				expect(plain).toBeUndefined();
+			} else {
+				expect(versionCondition(plain!), resource).toEqual({ lt: 1.2 });
+			}
+		}
+	});
+
+	it('keeps the service account path in Additional Fields only before 1.2', () => {
+		const collections = description.properties.filter(
+			(p) =>
+				p.name === 'additionalFields' &&
+				(p.displayOptions?.show?.resource as string[] | undefined)?.includes('serviceAccount'),
+		);
+		const has = (p: INodeProperties) => (p.options as INodeProperties[]).some((o) => o.name === 'path');
+		expect(collections.map((c) => [versionCondition(c), has(c)])).toEqual([
+			[{ lt: 1.2 }, true],
+			[{ gte: 1.2 }, false],
+		]);
+	});
+});
+
+describe('create operations send the chosen container as path', () => {
+	const run = async (
+		op: { execute: (this: never) => Promise<unknown> },
+		params: Record<string, unknown>,
+		typeVersion = 1.2,
+	) => {
+		transport.mockReset();
+		transport.mockResolvedValue({ objectGuid: 'g', distinguishedName: 'CN=x' });
+		const context = {
+			getInputData: () => [{ json: {} }],
+			getNodeParameter: (name: string, _i: number, fallback?: unknown) => (name in params ? params[name] : fallback),
+			continueOnFail: () => false,
+			getNode: () => ({ name: 'SMG', typeVersion }),
+			helpers: {
+				returnJsonArray: (data: unknown[]) => data.map((json) => ({ json })),
+				constructExecutionMetaData: (data: unknown[]) => data,
+			},
+		};
+		await op.execute.call(context as never);
+		return transport.mock.calls[0][3] as Record<string, unknown>;
+	};
+	const locator = (value: string, mode = 'list') => ({ __rl: true, mode, value });
+	const noAttributes = { mappingMode: 'defineBelow', value: {}, schema: [] };
+
+	it('user, computer, group and organizational unit', async () => {
+		const dn = `OU=Staff,${ROOT}`;
+		expect((await run(user.create, { name: 'u', samAccountName: 'u', path: locator(dn), userAttributes: noAttributes })).path).toBe(dn);
+		expect((await run(computer.create, { name: 'c', path: locator(dn, 'dn'), computerAttributes: noAttributes })).path).toBe(dn);
+		expect((await run(group.create, { name: 'g', path: locator(dn), groupAttributes: noAttributes })).path).toBe(dn);
+		expect((await run(organizationalUnit.create, { name: 'o', path: locator(dn), ouAttributes: noAttributes })).path).toBe(dn);
+	});
+
+	it('object, from a locator (1.2) and from a plain string (1.1)', async () => {
+		const dn = `OU=Staff,${ROOT}`;
+		expect((await run(object.create, { objectType: 'contact', objectName: 'x', path: locator(dn) })).path).toBe(dn);
+		expect((await run(object.create, { objectType: 'contact', objectName: 'x', path: dn }, 1.1)).path).toBe(dn);
+	});
+
+	it('service account: the locator from 1.2, Additional Fields before it, and nothing when empty', async () => {
+		const dn = `OU=Services,${ROOT}`;
+		const base = { name: 'svc', kind: 'standalone' };
+		expect((await run(serviceAccount.create, { ...base, path: locator(dn), additionalFields: {} })).path).toBe(dn);
+		expect((await run(serviceAccount.create, { ...base, additionalFields: { path: dn } }, 1.1)).path).toBe(dn);
+		expect(await run(serviceAccount.create, { ...base, path: locator(''), additionalFields: {} })).not.toHaveProperty('path');
 	});
 });
